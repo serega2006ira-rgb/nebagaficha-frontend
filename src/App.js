@@ -16,7 +16,7 @@ function App() {
 
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      axios.get('http://localhost:5001/api/profile')
+      axios.get('/.netlify/functions/github-callback')
         .then(res => setUser(res.data))
         .catch(() => {
           localStorage.removeItem('token');
@@ -41,7 +41,7 @@ function App() {
             <button onClick={logout} className="logout-btn">Выйти</button>
           </div>
         ) : (
-          <a href="http://localhost:5001/api/auth/github" className="btn">Войти через GitHub</a>
+          <a href="/.netlify/functions/github-auth" className="btn">Войти через GitHub</a>
         )}
       </header>
 
