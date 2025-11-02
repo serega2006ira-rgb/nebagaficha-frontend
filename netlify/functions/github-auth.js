@@ -3,7 +3,7 @@ exports.handler = async (event, context) => {
     const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
     
     // Формируем URL для возврата (должен совпадать с Callback URL на GitHub)
-    const REDIRECT_URI = 'https://' + event.headers.host + '/.netlify/functions/github-callback'; 
+    const REDIRECT_URI = 'https://fantastic-piroshki-8a73bc.netlify.app/.netlify/functions/github-callback';
 
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=user:email`;
 
