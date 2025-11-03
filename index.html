@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Не баг, а фича — Знакомства для айтишников</title>
+  <meta name="description" content="Сайт знакомств для разработчиков. Здесь твои баги — это фичи, а merge-конфликты — это страсть." />
+
+  <style>
+    :root {
+      --bg: #0d1117;
+      --text: #f0f6fc;
+      --accent: #58a6ff;
+      --card: #161b22;
+      --border: #30363d;
+      --green: #238636;
+      --red: #da3633;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    header {
+      padding: 2rem 0;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+    }
+
+    .logo span {
+      color: var(--green);
+    }
+
+    .tagline {
+      margin-top: 0.5rem;
+      font-size: 1.1rem;
+      color: #8b949e;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 4rem 0;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, var(--accent), #a5d8ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.3rem;
+      max-width: 700px;
+      margin: 0 auto 2rem;
+      color: #c9d1d9;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background: var(--accent);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s;
+      margin: 0.5rem;
+      box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(88, 166, 255, 0.5);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-secondary:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* Features */
+    .features {
+      padding: 4rem 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .card {
+      background: var(--card);
+      padding: 1.8rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      border-color: var(--accent);
+    }
+
+    .card h3 {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+      font-size: 1.3rem;
+    }
+
+    .card p {
+      color: #8b949e;
+      font-size: 0.95rem;
+    }
+
+    .code {
+      background: #161b22;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #79c0ff;
+      margin: 1rem 0;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 0;
+      color: #8b949e;
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .heart {
+      color: #da3633;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.2rem; }
+      .hero p { font-size: 1.1rem; }
+      .logo { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <div class="logo">Не баг<span>, а фича</span></div>
+      <p class="tagline">Знакомства для тех, кто пишет код и любит мемы</p>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>404: Love Not Found → 200: OK</h1>
+      <p>Ты не странный. Ты <strong>feature-rich</strong>. Здесь твои баги — это суперсила.</p>
+      <a href="#register" class="btn">Начать мэтчиться</a>
+      <a href="#how" class="btn btn-secondary">Как это работает?</a>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="container">
+      <div class="card">
+        <h3>sudo hug me</h3>
+        <p>Отправляй анонимные признания через Pull Request. Если ответили — merge в отношения!</p>
+        <div class="code">$ curl -X LOVE https://api.nebagaficha.ru/hug/@anna</div>
+      </div>
+
+      <div class="card">
+        <h3>Hotfix Date</h3>
+        <p>Свидание на 1 час. Не зашло? <code>git revert</code>. Зашло? <code>git push --force</code> в любовь.</p>
+      </div>
+
+      <div class="card">
+        <h3>Stack Overflow</h3>
+        <p>Не знаешь, как сказать «нравишься»? Наш ИИ подскажет: <em>«Ты как useEffect без dependency array — запускаешься при каждом рендере моего сердца»</em></p>
+      </div>
+
+      <div class="card">
+        <h3>Dark Mode Love</h3>
+        <p>Ночной режим для тех, кто кодит до утра и ищет пару с таким же графиком.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="hero" id="register">
+    <div class="container">
+      <h2>Готов стать фичей?</h2>
+      <p>Вход через GitHub — потому что <strong>твой код говорит о тебе больше, чем анкета</strong>.</p>
+      <a href="/.netlify/functions/github-auth" class="btn">Войти через GitHub</a>
+      <p style="margin-top: 1rem; font-size: 0.9rem; color: #8b949e;">
+        Скоро: регистрация по email, тесты на знание мемов и Vim-дуэли.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>© 2025 <strong>Не баг, а фича</strong> — Сделано с <span class="heart">любви</span> и <span style="color:#79c0ff">null</span></p>
+      <p>Ты не одинок. Ты просто в <code>loading...</code> состоянии.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Простая анимация при скролле
+    const cards = document.querySelectorAll('.card');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = 1;
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cards.forEach(card => {
+      card.style.opacity = 0;
+      card.style.transform = 'translateY(20px)';
+      card.style.transition = 'all 0.6s ease';
+      observer.observe(card);
+    });
+  </script>
+
+</body>
+</html>
