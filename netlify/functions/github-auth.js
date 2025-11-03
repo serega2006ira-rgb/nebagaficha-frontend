@@ -1,6 +1,6 @@
 exports.handler = async (event, context) => {
-    // Получаем CLIENT_ID из переменных окружения Netlify
-    const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+   // Получаем CLIENT_ID из переменных окружения Netlify
+    const CLIENT_ID = process.env.GITHUB_CLIENT_ID; // <--- Проверьте, что имя GITHUB_CLIENT_ID набрано верно
     
     // Формируем URL для возврата (должен совпадать с Callback URL на GitHub)
     const REDIRECT_URI = 'https://fantastic-piroshki-8a73bc.netlify.app/.netlify/functions/github-callback';
