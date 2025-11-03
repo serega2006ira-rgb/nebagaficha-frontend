@@ -1,9 +1,21 @@
+// frontend/api/github-callback.js
+// Обрабатывает колбэк от GitHub
+
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 
-exports.handler = async (event, context) => {
-    const { code } = event.queryStringParameters;
-    if (!code) { return { statusCode: 400, body: 'Missing GitHub code' }; }
+// *** АДРЕС ДЛЯ VERCEL ***
+const VERCEL_DOMAIN = 'https://nebagaficha-frontend-ktv6.vercel.app';
+
+// ** VERCEL ЭКСПОРТ **
+module.exports = async (req, res) => {
+    // В Vercel параметры запроса находятся в req.query
+    const { code } = req.query; 
+
+    if (!code) { 
+        // Перенаправляем обратно на главную страницу в случае ошибки
+        return res.redirect(302, VERCEL_DOMAIN); 
+    }
 
     try {
         const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
@@ -25,22 +37,14 @@ exports.handler = async (event, context) => {
         const profile = userResponse.data;
         
         // 3. Генерация JWT-токена
-        const payload = { id: profile.id, username: profile.login };
+        const payload = { id: profile.id, username: profile.login, provider: 'github' };
         const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
 
-        // 4. Перенаправление на Frontend с токеном
-        const FRONTEND_URL = 'https://fantastic-piroshki-8a73bc.netlify.app';
-
-        return {
-            statusCode: 302,
-            headers: {
-                // Передаем токен обратно Frontend'у
-                'Location': `${FRONTEND_URL}?token=${token}`,
-            },
-            body: ''
-        };
+        // 4. Перенаправление на Frontend Vercel с токеном
+        res.redirect(302, `${VERCEL_DOMAIN}/?token=${token}`);
 
     } catch (error) {
-        return { statusCode: 500, body: 'Authentication failed' };
+        console.error('GitHub Auth Failed:', error.message);
+        res.redirect(302, `${VERCEL_DOMAIN}/?error=auth_failed`);
     }
 };

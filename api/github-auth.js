@@ -1,18 +1,37 @@
-exports.handler = async (event, context) => {
-   // Получаем CLIENT_ID из переменных окружения Netlify
-    const CLIENT_ID = process.env.GITHUB_CLIENT_ID; // <--- Проверьте, что имя GITHUB_CLIENT_ID набрано верно
-    
-    // Формируем URL для возврата (должен совпадать с Callback URL на GitHub)
-    const REDIRECT_URI = 'https://fantastic-piroshki-8a73bc.netlify.app/.netlify/functions/github-callback';
+// frontend/api/github-auth.js
+const { GITHUB_CLIENT_ID } = process.env;
 
-    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=user:email`;
+// Адрес колбэка Vercel
+const VERCEL_DOMAIN = 'https://nebagaficha-frontend-ktv6.vercel.app';
+const REDIRECT_URI = `${VERCEL_DOMAIN}/api/github-callback`;
 
-    // Перенаправление пользователя на GitHub
-    return {
-        statusCode: 302,
-        headers: {
-            'Location': githubAuthUrl,
-        },
-        body: ''
-    };
+function generateRandomString(length) {
+  let text = '';
+  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for (let i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+}
+
+// ** ИСПРАВЛЕННЫЙ ЭКСПОРТ ДЛЯ VERCEL **
+module.exports = async (req, res) => {
+  if (!GITHUB_CLIENT_ID) {
+    // Используем стандартный объект ответа Vercel/Node.js
+    res.status(500).send('GITHUB_CLIENT_ID is missing');
+    return;
+  }
+
+  const state = generateRandomString(16);
+
+  const authUrl = 'https://github.com/login/oauth/authorize?' +
+    new URLSearchParams({
+      client_id: GITHUB_CLIENT_ID,
+      redirect_uri: REDIRECT_URI,
+      scope: 'user', 
+      state: state,
+    }).toString();
+
+  // Используем стандартный объект ответа Vercel/Node.js
+  res.redirect(302, authUrl);
 };

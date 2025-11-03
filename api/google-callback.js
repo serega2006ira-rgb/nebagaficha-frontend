@@ -1,4 +1,6 @@
 // frontend/api/google-callback.js
+// Обрабатывает колбэк от Google
+
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 
@@ -9,15 +11,14 @@ const VERCEL_DOMAIN = 'https://nebagaficha-frontend-ktv6.vercel.app';
 const REDIRECT_URI = `${VERCEL_DOMAIN}/api/google-callback`;
 
 
-exports.handler = async function(event) {
-  const { code, error } = event.queryStringParameters;
+// ** VERCEL ЭКСПОРТ **
+module.exports = async (req, res) => {
+  // В Vercel параметры запроса находятся в req.query
+  const { code, error } = req.query;
   
   if (error || !code) {
     console.error('Google auth error:', error || 'Missing code');
-    return {
-      statusCode: 302,
-      headers: { Location: `${VERCEL_DOMAIN}/?error=google_auth_failed` },
-    };
+    return res.redirect(302, `${VERCEL_DOMAIN}/?error=google_auth_failed`);
   }
 
   try {
@@ -52,19 +53,10 @@ exports.handler = async function(event) {
     const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '1h' });
 
     // 4. Перенаправление на фронтенд Vercel с токеном
-    return {
-      statusCode: 302,
-      headers: {
-        Location: `${VERCEL_DOMAIN}/?token=${token}`,
-        'Cache-Control': 'no-cache', 
-      },
-    };
+    res.redirect(302, `${VERCEL_DOMAIN}/?token=${token}`);
 
   } catch (e) {
     console.error('Error during Google login:', e.response?.data || e.message);
-    return {
-      statusCode: 302,
-      headers: { Location: `${VERCEL_DOMAIN}/?error=google_login_failed` },
-    };
+    res.redirect(302, `${VERCEL_DOMAIN}/?error=google_login_failed`);
   }
 };

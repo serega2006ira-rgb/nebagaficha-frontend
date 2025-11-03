@@ -1,11 +1,12 @@
 // frontend/api/google-auth.js
+// Начинает авторизацию через Google
+
 const { GOOGLE_CLIENT_ID } = process.env;
 
 // *** АДРЕС ДЛЯ VERCEL ***
 const VERCEL_DOMAIN = 'https://nebagaficha-frontend-ktv6.vercel.app';
 const REDIRECT_URI = `${VERCEL_DOMAIN}/api/google-callback`;
 
-// Генерация случайной строки для состояния (безопасность)
 function generateRandomString(length) {
   let text = '';
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -15,12 +16,11 @@ function generateRandomString(length) {
   return text;
 }
 
-exports.handler = async function(event, context) {
+// ** VERCEL ЭКСПОРТ **
+module.exports = async (req, res) => {
   if (!GOOGLE_CLIENT_ID) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'GOOGLE_CLIENT_ID is missing' })
-    };
+    res.status(500).send('GOOGLE_CLIENT_ID is missing');
+    return;
   }
 
   const state = generateRandomString(16);
@@ -29,17 +29,11 @@ exports.handler = async function(event, context) {
     new URLSearchParams({
       response_type: 'code',
       client_id: GOOGLE_CLIENT_ID,
-      scope: 'openid profile email', // Запрашиваем данные пользователя
+      scope: 'openid profile email', 
       redirect_uri: REDIRECT_URI,
       state: state,
       access_type: 'online'
     }).toString();
 
-  return {
-    statusCode: 302,
-    headers: {
-      Location: authUrl,
-      'Cache-Control': 'no-cache', 
-    },
-  };
+  res.redirect(302, authUrl);
 };
