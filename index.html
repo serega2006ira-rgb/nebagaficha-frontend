@@ -112,7 +112,6 @@
       color: white;
     }
     
-    /* Добавлен стиль для кнопки Выход */
     .btn-logout {
       background: var(--red);
       color: white;
@@ -376,41 +375,39 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // --- КОНСТАНТЫ ---
+        const BACKEND_URL = 'http://localhost:5001'; 
+        const PROTECTED_ROUTE = '/api/protected/profile';
+        const tokenKey = 'nebagaficha_token';
+        
+        const heroSection = document.getElementById('register');
+        const profilesSection = document.getElementById('profiles');
+        const mainHero = document.querySelector('section.hero.main-hero');
+        
         // --- Вспомогательная функция для декодирования JWT ---
         function decodeJwt(token) {
             try {
-                // Разбиваем токен на части, берем Payload (индекс 1)
                 const base64Url = token.split('.')[1];
-                // Заменяем символы, чтобы сделать строку base64 безопасной
                 const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                // Декодируем и парсим JSON
                 const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
                     return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
                 }).join(''));
                 return JSON.parse(jsonPayload);
             } catch (e) {
-                console.error("JWT decoding failed:", e);
                 return null;
             }
         }
 
         // --- ЛОГИКА АВТОРИЗАЦИИ И СМЕНЫ ИНТЕРФЕЙСА ---
-        const heroSection = document.getElementById('register');
-        const profilesSection = document.getElementById('profiles');
-        const mainHero = document.querySelector('section.hero.main-hero'); // Используем класс для точности
-
         const params = new URLSearchParams(window.location.search);
-        const token = params.get('token'); // Токен, пришедший в URL после колбэка
-        const tokenKey = 'nebagaficha_token';
+        const token = params.get('token'); 
         const existingToken = localStorage.getItem(tokenKey);
         
         let activeToken = null;
 
-        // 1. Обработка токена из URL
         if (token) {
             activeToken = token;
             localStorage.setItem(tokenKey, token);
-            // Удаляем токен из URL для чистоты
             window.history.replaceState({}, document.title, window.location.pathname);
         } else if (existingToken) {
             activeToken = existingToken;
@@ -431,14 +428,14 @@
                         
                         <button id="logoutBtn" class="btn btn-logout">Выход</button>
                         
-                        <a href="#profiles" id="findPairBtn" class="btn" style="margin-left: 1rem;">Найти пару</a>
+                        <button id="findPairBtn" class="btn" style="margin-left: 1rem;">Найти пару</button>
                         <p style="margin-top: 1rem; font-size: 0.9rem; color: #8b949e;">
                             Удачного мэтча!
                         </p>
                     </div>
                 `;
                 
-                // 2. Добавление обработчика ВЫХОДА
+                // 1. Добавление обработчика ВЫХОДА
                 const logoutBtn = document.getElementById('logoutBtn');
                 if (logoutBtn) {
                     logoutBtn.addEventListener('click', function() {
@@ -447,21 +444,47 @@
                     });
                 }
 
-                // 3. Добавление обработчика НАЙТИ ПАРУ
+                // 2. Добавление обработчика НАЙТИ ПАРУ (Тест API)
                 const findPairBtn = document.getElementById('findPairBtn');
                 if (findPairBtn) {
-                    findPairBtn.addEventListener('click', function(e) {
+                    findPairBtn.addEventListener('click', async function(e) {
                         e.preventDefault(); 
                         
-                        // Скрываем стартовый экран и показываем профили
-                        if (profilesSection) {
-                            profilesSection.style.display = 'block'; // Используем block, так как grid для .container
-                        } 
-                        if (heroSection) heroSection.style.display = 'none'; 
-                        if (mainHero) mainHero.style.display = 'none';
-                        
-                        // Скролл к секции #profiles
-                        if (profilesSection) profilesSection.scrollIntoView({ behavior: 'smooth' });
+                        // Запрос к защищенному маршруту API
+                        try {
+                            const response = await fetch(`${BACKEND_URL}${PROTECTED_ROUTE}`, {
+                                method: 'GET',
+                                headers: {
+                                    'Authorization': `Bearer ${activeToken}`, // Отправляем токен!
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+
+                            const data = await response.json();
+
+                            if (response.ok) {
+                                console.log('✅ Успешно получен защищенный ресурс:', data);
+                                
+                                // Успешный ответ от сервера - показываем профили
+                                alert(`Верификация JWT прошла успешно! Сервер ответил: ${data.secretData}`);
+                                
+                                // Скрываем/показываем секции
+                                if (profilesSection) profilesSection.style.display = 'block';
+                                if (heroSection) heroSection.style.display = 'none';
+                                if (mainHero) mainHero.style.display = 'none';
+                                
+                                if (profilesSection) profilesSection.scrollIntoView({ behavior: 'smooth' });
+
+                            } else {
+                                // Ошибка 401/403 (Сервер не принял токен)
+                                alert(`Ошибка доступа к API: ${data.error || response.statusText}. Попробуйте войти снова.`);
+                                console.error('API Error:', data);
+                            }
+
+                        } catch (error) {
+                            console.error('Network or CORS error:', error);
+                            alert('Не удалось подключиться к бэкенду. Проверьте, запущен ли сервер на порту 5001.');
+                        }
                     });
                 }
 
