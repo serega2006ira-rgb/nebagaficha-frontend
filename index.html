@@ -111,6 +111,20 @@
       background: var(--accent);
       color: white;
     }
+    
+    /* Добавлен стиль для кнопки Выход */
+    .btn-logout {
+      background: var(--red);
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-logout:hover {
+      background: #ff7b72;
+      box-shadow: 0 8px 20px rgba(218, 54, 51, 0.5);
+    }
+
 
     /* Features */
     .features {
@@ -187,7 +201,7 @@
       padding: 4rem 0;
       min-height: 80vh;
       text-align: center;
-      display: none; /* Скрываем по умолчанию, пока пользователь не нажмет "Найти пару" */
+      display: none; /* Скрываем по умолчанию, пока не нажмут "Найти пару" */
     }
 
     #profiles h2 {
@@ -256,7 +270,6 @@
     .btn-dislike {
       background: var(--red);
     }
-
   </style>
 </head>
 <body>
@@ -268,7 +281,7 @@
     </div>
   </header>
 
-  <section class="hero">
+  <section class="hero main-hero">
     <div class="container">
       <h1>404: Love Not Found → 200: OK</h1>
       <p>Ты не странный. Ты <strong>feature-rich</strong>. Здесь твои баги — это суперсила.</p>
@@ -363,7 +376,103 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- Код Анимации ---
+        // --- Вспомогательная функция для декодирования JWT ---
+        function decodeJwt(token) {
+            try {
+                // Разбиваем токен на части, берем Payload (индекс 1)
+                const base64Url = token.split('.')[1];
+                // Заменяем символы, чтобы сделать строку base64 безопасной
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                // Декодируем и парсим JSON
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                console.error("JWT decoding failed:", e);
+                return null;
+            }
+        }
+
+        // --- ЛОГИКА АВТОРИЗАЦИИ И СМЕНЫ ИНТЕРФЕЙСА ---
+        const heroSection = document.getElementById('register');
+        const profilesSection = document.getElementById('profiles');
+        const mainHero = document.querySelector('section.hero.main-hero'); // Используем класс для точности
+
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token'); // Токен, пришедший в URL после колбэка
+        const tokenKey = 'nebagaficha_token';
+        const existingToken = localStorage.getItem(tokenKey);
+        
+        let activeToken = null;
+
+        // 1. Обработка токена из URL
+        if (token) {
+            activeToken = token;
+            localStorage.setItem(tokenKey, token);
+            // Удаляем токен из URL для чистоты
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } else if (existingToken) {
+            activeToken = existingToken;
+        }
+
+
+        if (activeToken && heroSection) {
+            const userData = decodeJwt(activeToken);
+            
+            if (userData) {
+                const username = userData.username || 'Тайный Кодер';
+            
+                // Обновление интерфейса для авторизованного пользователя
+                heroSection.innerHTML = `
+                    <div class="container">
+                        <h2>Приветствуем, ${username}!</h2>
+                        <p>Твой токен сохранен. Теперь ты можешь искать баги... то есть фичи.</p>
+                        
+                        <button id="logoutBtn" class="btn btn-logout">Выход</button>
+                        
+                        <a href="#profiles" id="findPairBtn" class="btn" style="margin-left: 1rem;">Найти пару</a>
+                        <p style="margin-top: 1rem; font-size: 0.9rem; color: #8b949e;">
+                            Удачного мэтча!
+                        </p>
+                    </div>
+                `;
+                
+                // 2. Добавление обработчика ВЫХОДА
+                const logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', function() {
+                        localStorage.removeItem(tokenKey);
+                        window.location.reload(); 
+                    });
+                }
+
+                // 3. Добавление обработчика НАЙТИ ПАРУ
+                const findPairBtn = document.getElementById('findPairBtn');
+                if (findPairBtn) {
+                    findPairBtn.addEventListener('click', function(e) {
+                        e.preventDefault(); 
+                        
+                        // Скрываем стартовый экран и показываем профили
+                        if (profilesSection) {
+                            profilesSection.style.display = 'block'; // Используем block, так как grid для .container
+                        } 
+                        if (heroSection) heroSection.style.display = 'none'; 
+                        if (mainHero) mainHero.style.display = 'none';
+                        
+                        // Скролл к секции #profiles
+                        if (profilesSection) profilesSection.scrollIntoView({ behavior: 'smooth' });
+                    });
+                }
+
+            } else {
+                 // Токен невалиден
+                 localStorage.removeItem(tokenKey);
+                 if (!token) window.location.reload(); 
+            }
+        } 
+        
+        // --- Код Анимации (Оставлен для полноты) ---
         const cards = document.querySelectorAll('.card');
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
@@ -380,93 +489,6 @@
           card.style.transition = 'all 0.6s ease';
           observer.observe(card);
         });
-        
-        // --- Код Обработки Авторизации ---
-        const heroSection = document.getElementById('register');
-        const profilesSection = document.getElementById('profiles');
-        const mainHero = document.querySelector('section.hero:not(#register)');
-        
-        function decodeJwt(token) {
-            try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                return JSON.parse(jsonPayload);
-            } catch (e) {
-                return null;
-            }
-        }
-
-        const params = new URLSearchParams(window.location.search);
-        const token = params.get('token');
-        const existingToken = localStorage.getItem('nebagaficha_token');
-        
-        let activeToken = null;
-
-        if (token) {
-            activeToken = token;
-            localStorage.setItem('nebagaficha_token', token);
-            window.history.replaceState({}, document.title, window.location.pathname);
-        } else if (existingToken) {
-            activeToken = existingToken;
-        }
-
-
-        if (activeToken && heroSection) {
-            const userData = decodeJwt(activeToken);
-            
-            if (userData) {
-                const username = userData.username || 'Тайный Кодер';
-            
-                // Обновление интерфейса
-                heroSection.innerHTML = `
-                    <div class="container">
-                        <h2>Приветствуем, ${username}!</h2>
-                        <p>Твой токен сохранен. Теперь ты можешь искать баги... то есть фичи.</p>
-                        <button id="logoutBtn" class="btn btn-secondary">Выйти</button>
-                        <a href="#profiles" id="findPairBtn" class="btn" style="margin-left: 1rem;">Найти пару</a>
-                        <p style="margin-top: 1rem; font-size: 0.9rem; color: #8b949e;">
-                            Удачного мэтча!
-                        </p>
-                    </div>
-                `;
-                
-                // Добавление обработчика выхода (после создания кнопки)
-                const logoutBtn = document.getElementById('logoutBtn');
-                if (logoutBtn) {
-                    logoutBtn.addEventListener('click', function() {
-                        localStorage.removeItem('nebagaficha_token');
-                        window.location.reload(); 
-                    });
-                }
-
-                // --- ЛОГИКА НАВИГАЦИИ (добавлено id="findPairBtn") ---
-                const findPairBtn = document.getElementById('findPairBtn');
-                if (findPairBtn) {
-                    findPairBtn.addEventListener('click', function(e) {
-                        e.preventDefault(); 
-                        
-                        // Скрываем стартовый экран и показываем профили
-                        if (profilesSection) profilesSection.style.display = 'grid'; 
-                        if (heroSection) heroSection.style.display = 'none'; 
-                        if (mainHero) mainHero.style.display = 'none';
-                        
-                        // Скролл к секции #profiles
-                        if (profilesSection) profilesSection.scrollIntoView({ behavior: 'smooth' });
-                    });
-                }
-
-            } else {
-                 // Токен невалиден: удаляем и перезагружаем
-                 localStorage.removeItem('nebagaficha_token');
-                 if (!token) window.location.reload(); 
-            }
-        } else if (existingToken) {
-            // Если мы авторизованы, но токена в URL нет (обычная загрузка), скрываем основной hero.
-            if (mainHero) mainHero.style.display = 'none';
-        }
     });
 
 </script>
