@@ -352,11 +352,11 @@
       <h2>Готов стать фичей?</h2>
       <p>Вход через GitHub — потому что <strong>твой код говорит о тебе больше, чем анкета</strong>.</p>
       
-      <a href="https://nebagaficha-frontend-ktv6.vercel.app/api/github-auth" class="btn" role="button" style="background: #24292e;">
+      <a id="githubLoginBtn" href="#" class="btn" role="button" style="background: #24292e;">
         Войти через GitHub
       </a>
       
-      <a href="https://nebagaficha-frontend-ktv6.vercel.app/api/google-auth" class="btn" role="button" style="background: #db4437; margin-left: 1rem;">
+      <a id="googleLoginBtn" href="#" class="btn" role="button" style="background: #db4437; margin-left: 1rem;">
         Войти через Google
       </a>
 
@@ -384,6 +384,21 @@
         const profilesSection = document.getElementById('profiles');
         const mainHero = document.querySelector('section.hero.main-hero');
         
+        // --- ДИНАМИЧЕСКАЯ УСТАНОВКА URL КНОПОК ---
+        const githubLoginBtn = document.getElementById('githubLoginBtn');
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+
+        if (githubLoginBtn) {
+            githubLoginBtn.href = `${BACKEND_URL}/api/auth/github`;
+        }
+        
+        // Если у вас настроена аутентификация через Google на бэкенде:
+        if (googleLoginBtn) {
+            googleLoginBtn.href = `${BACKEND_URL}/api/auth/google`; // Предполагаемый маршрут
+        }
+        // --- КОНЕЦ ДИНАМИЧЕСКОЙ УСТАНОВКИ URL КНОПОК ---
+
+
         // --- Вспомогательная функция для декодирования JWT ---
         function decodeJwt(token) {
             try {
