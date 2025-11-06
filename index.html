@@ -3,14 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Не баг, а фича — сайт для знакомств айтишников</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Не баг, а фича — Приложение для знакомств</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Load React, ReactDOM, and Babel for JSX in the browser -->
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Load Lucide Icons -->
     <script type="module">
         import * as lucide from 'https://unpkg.com/lucide@latest/dist/umd/lucide.js';
         window.lucide = lucide;
@@ -35,18 +32,19 @@
 </head>
 <body>
 
-    <!-- Контейнер, куда будет монтироваться React-приложение -->
     <div id="root">
         <div class="min-h-screen flex items-center justify-center bg-gray-50">
             <div class="text-gray-500">Загрузка React-приложения...</div>
         </div>
     </div>
 
-    <!-- КОД REACT/JSX -->
-    <!-- type="text/babel" обязателен для обработки JSX -->
     <script type="text/babel">
         const { useState, useEffect, useCallback, createElement: e } = React;
-        const { LogOut, Heart, X, Zap, Loader, Users, Link: LinkIcon, AlertTriangle, UserCheck } = window.lucide;
+        
+        // --- ИСПРАВЛЕННАЯ ЛИНИЯ ---
+        // Явно объявляем все используемые иконки Lucide, чтобы избежать ошибки undefined
+        const { LogOut, Heart, X, Zap, Loader, Users, AlertTriangle } = window.lucide;
+        // --------------------------
 
         // URL вашего развернутого бэкенда
         const BACKEND_URL = 'https://nebagaficha-backend-api-16s4.vercel.app';
@@ -171,7 +169,7 @@
         const Header = ({ user, onLogout }) => (
             <header className="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-10">
                 <div className="flex items-center space-x-3">
-                    <Zap className="w-6 h-6 text-indigo-600" />
+                    {e(Zap, { className: "w-6 h-6 text-indigo-600" })}
                     <h1 className="text-xl font-extrabold text-gray-800 tracking-tight">
                         Не баг, а фича
                     </h1>
@@ -499,3 +497,4 @@
     </script>
 </body>
 </html>
+```eof
