@@ -1,534 +1,501 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Не баг, а фича — Знакомства для айтишников</title>
-  <meta name="description" content="Сайт знакомств для разработчиков. Здесь твои баги — это фичи, а merge-конфликты — это страсть." />
-
-  <style>
-    :root {
-      --bg: #0d1117;
-      --text: #f0f6fc;
-      --accent: #58a6ff;
-      --card: #161b22;
-      --border: #30363d;
-      --green: #238636;
-      --red: #da3633;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-
-    /* Header */
-    header {
-      padding: 2rem 0;
-      text-align: center;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .logo {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--accent);
-      text-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
-    }
-
-    .logo span {
-      color: var(--green);
-    }
-
-    .tagline {
-      margin-top: 0.5rem;
-      font-size: 1.1rem;
-      color: #8b949e;
-    }
-
-    /* Hero */
-    .hero {
-      text-align: center;
-      padding: 4rem 0;
-    }
-
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      background: linear-gradient(90deg, var(--accent), #a5d8ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero p {
-      font-size: 1.3rem;
-      max-width: 700px;
-      margin: 0 auto 2rem;
-      color: #c9d1d9;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 14px 32px;
-      background: var(--accent);
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: all 0.3s;
-      margin: 0.5rem;
-      box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
-    }
-
-    .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(88, 166, 255, 0.5);
-    }
-
-    .btn-secondary {
-      background: transparent;
-      border: 2px solid var(--accent);
-      color: var(--accent);
-    }
-
-    .btn-secondary:hover {
-      background: var(--accent);
-      color: white;
-    }
-    
-    .btn-logout {
-      background: var(--red);
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-
-    .btn-logout:hover {
-      background: #ff7b72;
-      box-shadow: 0 8px 20px rgba(218, 54, 51, 0.5);
-    }
-
-
-    /* Features */
-    .features {
-      padding: 4rem 0;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-    }
-
-    .card {
-      background: var(--card);
-      padding: 1.8rem;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      transition: transform 0.3s;
-    }
-
-    .card:hover {
-      transform: translateY(-8px);
-      border-color: var(--accent);
-    }
-
-    .card h3 {
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--accent);
-      margin-bottom: 0.8rem;
-      font-size: 1.3rem;
-    }
-
-    .card p {
-      color: #8b949e;
-      font-size: 0.95rem;
-    }
-
-    .code {
-      background: #161b22;
-      padding: 1rem;
-      border-radius: 8px;
-      font-family: 'JetBrains Mono', monospace;
-      color: #79c0ff;
-      margin: 1rem 0;
-      overflow-x: auto;
-      border: 1px solid var(--border);
-    }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 3rem 0;
-      color: #8b949e;
-      font-size: 0.9rem;
-      border-top: 1px solid var(--border);
-    }
-
-    .heart {
-      color: #da3633;
-      animation: pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .hero h1 { font-size: 2.2rem; }
-      .hero p { font-size: 1.1rem; }
-      .logo { font-size: 2rem; }
-    }
-
-    /* Profiles Section */
-    #profiles {
-      padding: 4rem 0;
-      min-height: 80vh;
-      text-align: center;
-      display: none; /* Скрываем по умолчанию, пока не нажмут "Найти пару" */
-    }
-
-    #profiles h2 {
-      font-size: 2.5rem;
-      margin-bottom: 2rem;
-      color: var(--accent);
-    }
-
-    .profile-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-
-    .profile-card {
-      background: var(--card);
-      padding: 1.5rem;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      text-align: left;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .profile-avatar {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      border: 3px solid var(--accent);
-      object-fit: cover;
-      margin-bottom: 1rem;
-    }
-
-    .profile-card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-    }
-
-    .profile-bio {
-      color: #8b949e;
-      font-size: 0.95rem;
-      margin-bottom: 1rem;
-      text-align: center;
-    }
-
-    .action-buttons {
-      display: flex;
-      justify-content: space-around;
-      width: 100%;
-    }
-
-    .action-buttons .btn {
-      padding: 10px 20px;
-      margin: 0;
-      font-size: 1rem;
-    }
-
-    .btn-like {
-      background: var(--green);
-    }
-
-    .btn-dislike {
-      background: var(--red);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Не баг, а фича — сайт для знакомств айтишников</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load React, ReactDOM, and Babel for JSX in the browser -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Load Lucide Icons -->
+    <script type="module">
+        import * as lucide from 'https://unpkg.com/lucide@latest/dist/umd/lucide.js';
+        window.lucide = lucide;
+    </script>
+    <style>
+        /* Установим шрифт Inter по умолчанию */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease;
+        }
+        /* Адаптивный дизайн для мобильных устройств */
+        .max-w-xl {
+            max-width: 90%;
+        }
+        @media (min-width: 640px) {
+            .max-w-xl {
+                max-width: 560px;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <header>
-    <div class="container">
-      <div class="logo">Не баг<span>, а фича</span></div>
-      <p class="tagline">Знакомства для тех, кто пишет код и любит мемы</p>
-    </div>
-  </header>
-
-  <section class="hero main-hero">
-    <div class="container">
-      <h1>404: Love Not Found → 200: OK</h1>
-      <p>Ты не странный. Ты <strong>feature-rich</strong>. Здесь твои баги — это суперсила.</p>
-      <a href="#register" class="btn">Начать мэтчиться</a>
-      <a href="#how" class="btn btn-secondary">Как это работает?</a>
-    </div>
-  </section>
-
-  <section class="features">
-    <div class="container">
-      <div class="card">
-        <h3>sudo hug me</h3>
-        <p>Отправляй анонимные признания через Pull Request. Если ответили — merge в отношения!</p>
-        <div class="code">$ curl -X LOVE https://api.nebagaficha.ru/hug/@anna</div>
-      </div>
-
-      <div class="card">
-        <h3>Hotfix Date</h3>
-        <p>Свидание на 1 час. Не зашло? <code>git revert</code>. Зашло? <code>git push --force</code> в любовь.</p>
-      </div>
-
-      <div class="card">
-        <h3>Stack Overflow</h3>
-        <p>Не знаешь, как сказать «нравишься»? Наш ИИ подскажет: <em>«Ты как useEffect без dependency array — запускаешься при каждом рендере моего сердца»</em></p>
-      </div>
-
-      <div class="card">
-        <h3>Dark Mode Love</h3>
-        <p>Ночной режим для тех, кто кодит до утра и ищет пару с таким же графиком.</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="profiles">
-    <div class="container">
-      <h2>Кто еще ищет фичи?</h2>
-      <div class="profile-grid">
-        
-        <div class="profile-card">
-          <img src="https://avatars.githubusercontent.com/u/1024?v=4" alt="Аватар пользователя" class="profile-avatar">
-          <h3>@LinusT</h3>
-          <p class="profile-bio">
-            Создатель, Лидер, Конфликтный Мерж. Ищу стабильную ветку. Хобби: рыбалка и <code>git blame</code>.
-          </p>
-          <div class="action-buttons">
-            <button class="btn btn-like">Merge (Like)</button>
-            <button class="btn btn-dislike">Revert (Dislike)</button>
-          </div>
-        </div>
-
-        <div class="profile-card">
-          <img src="https://avatars.githubusercontent.com/u/98681?v=4" alt="Аватар пользователя" class="profile-avatar">
-          <h3>@GraceH</h3>
-          <p class="profile-bio">
-            Люблю функциональное программирование и чистый код. Ищу того, кто не будет ломать продакшен по пятницам.
-          </p>
-          <div class="action-buttons">
-            <button class="btn btn-like">Merge (Like)</button>
-            <button class="btn btn-dislike">Revert (Dislike)</button>
-          </div>
-        </div>
-        
+    <!-- Контейнер, куда будет монтироваться React-приложение -->
+    <div id="root">
+        <div class="min-h-screen flex items-center justify-center bg-gray-50">
+            <div class="text-gray-500">Загрузка React-приложения...</div>
         </div>
     </div>
-  </section>
 
-<section class="hero" id="register">
-    <div class="container">
-      <h2>Готов стать фичей?</h2>
-      <p>Вход через GitHub — потому что <strong>твой код говорит о тебе больше, чем анкета</strong>.</p>
-      
-      <a id="githubLoginBtn" href="#" class="btn" role="button" style="background: #24292e;">
-        Войти через GitHub
-      </a>
-      
-      <a id="googleLoginBtn" href="#" class="btn" role="button" style="background: #db4437; margin-left: 1rem;">
-        Войти через Google
-      </a>
+    <!-- КОД REACT/JSX -->
+    <!-- type="text/babel" обязателен для обработки JSX -->
+    <script type="text/babel">
+        const { useState, useEffect, useCallback, createElement: e } = React;
+        const { LogOut, Heart, X, Zap, Loader, Users, Link: LinkIcon, AlertTriangle, UserCheck } = window.lucide;
 
-      <p style="margin-top: 1rem; font-size: 0.9rem; color: #8b949e;">
-        Скоро: регистрация по email, тесты на знание мемов и Vim-дуэли.
-      </p>
-    </div>
-  </section>
+        // URL вашего развернутого бэкенда
+        const BACKEND_URL = 'https://nebagaficha-backend-api-16s4.vercel.app';
+        const FRONTEND_URL = window.location.origin;
 
-  <footer>
-    <div class="container">
-      <p>© 2025 <strong>Не баг, а фича</strong> — Сделано с <span class="heart">любви</span> и <span style="color:#79c0ff">null</span></p>
-      <p>Ты не одинок. Ты просто в <code>loading...</code> состоянии.</p>
-    </div>
-  </footer>
+        // --- ДОБАВЛЕННЫЕ IT-ФРАЗЫ И ЛОГИКА ---
+        const IT_MOTTOS = [
+            "Мой код всегда компилируется с первого раза... после 100 попыток.",
+            "Ищу того, кто не боится `git merge`.",
+            "Предпочитаю общение через асинхронные колбэки.",
+            "У меня есть 99 проблем, но `TypeScript` их не решает.",
+            "Мое сердцебиение в ритме 127.0.0.1.",
+            "Ты — мой API, я — твой клиент. Давай установим соединение.",
+            "Готов к деплою в вашу жизнь.",
+            "Мой любимый цвет — #007bff (Bootstrap primary).",
+            "Ответ на вопрос жизни, Вселенной и всего такого — 42.",
+            "Работаю на стеке MERN, но ищу тебя, чтобы создать 'ME R N G'."
+        ];
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- КОНСТАНТЫ ---
-        const BACKEND_URL = 'https://nebagaficha-backend-api-16s4.vercel.app'; 
-        const PROTECTED_ROUTE = '/api/protected/profile';
-        const tokenKey = 'nebagaficha_token';
-        
-        const heroSection = document.getElementById('register');
-        const profilesSection = document.getElementById('profiles');
-        const mainHero = document.querySelector('section.hero.main-hero');
-        
-        // --- ДИНАМИЧЕСКАЯ УСТАНОВКА URL КНОПОК ---
-        const githubLoginBtn = document.getElementById('githubLoginBtn');
-        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        const getRandomItMotto = () => {
+            const randomIndex = Math.floor(Math.random() * IT_MOTTOS.length);
+            return IT_MOTTOS[randomIndex];
+        };
+        // ------------------------------------
 
-        if (githubLoginBtn) {
-            githubLoginBtn.href = `${BACKEND_URL}/api/auth/github`;
-        }
-        
-        // Если у вас настроена аутентификация через Google на бэкенде:
-        if (googleLoginBtn) {
-            googleLoginBtn.href = `${BACKEND_URL}/api/auth/google`; // Предполагаемый маршрут
-        }
-        // --- КОНЕЦ ДИНАМИЧЕСКОЙ УСТАНОВКИ URL КНОПОК ---
+        // Главный компонент приложения
+        const App = () => {
+            const [token, setToken] = useState(null);
+            const [user, setUser] = useState(null);
+            const [loading, setLoading] = useState(true);
+            const [error, setError] = useState(null);
 
+            // --- 1. Обработка токена из URL ---
+            useEffect(() => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const tokenFromUrl = urlParams.get('token');
 
-        // --- Вспомогательная функция для декодирования JWT ---
-        function decodeJwt(token) {
-            try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                return JSON.parse(jsonPayload);
-            } catch (e) {
-                return null;
-            }
-        }
-
-        // --- ЛОГИКА АВТОРИЗАЦИИ И СМЕНЫ ИНТЕРФЕЙСА ---
-        const params = new URLSearchParams(window.location.search);
-        const token = params.get('token'); 
-        const existingToken = localStorage.getItem(tokenKey);
-        
-        let activeToken = null;
-
-        if (token) {
-            activeToken = token;
-            localStorage.setItem(tokenKey, token);
-            window.history.replaceState({}, document.title, window.location.pathname);
-        } else if (existingToken) {
-            activeToken = existingToken;
-        }
-
-
-        if (activeToken && heroSection) {
-            const userData = decodeJwt(activeToken);
-            
-            if (userData) {
-                const username = userData.username || 'Тайный Кодер';
-            
-                // Обновление интерфейса для авторизованного пользователя
-                heroSection.innerHTML = `
-                    <div class="container">
-                        <h2>Приветствуем, ${username}!</h2>
-                        <p>Твой токен сохранен. Теперь ты можешь искать баги... то есть фичи.</p>
-                        
-                        <button id="logoutBtn" class="btn btn-logout">Выход</button>
-                        
-                        <button id="findPairBtn" class="btn" style="margin-left: 1rem;">Найти пару</button>
-                        <p style="margin-top: 1rem; font-size: 0.9rem; color: #8b949e;">
-                            Удачного мэтча!
-                        </p>
-                    </div>
-                `;
-                
-                // 1. Добавление обработчика ВЫХОДА
-                const logoutBtn = document.getElementById('logoutBtn');
-                if (logoutBtn) {
-                    logoutBtn.addEventListener('click', function() {
-                        localStorage.removeItem(tokenKey);
-                        window.location.reload(); 
-                    });
+                if (tokenFromUrl) {
+                    // Сохраняем токен и очищаем URL
+                    localStorage.setItem('nebagaficha_token', tokenFromUrl);
+                    setToken(tokenFromUrl);
+                    window.history.replaceState({}, document.title, FRONTEND_URL);
+                } else {
+                    // Загружаем токен из localStorage
+                    const storedToken = localStorage.getItem('nebagaficha_token');
+                    if (storedToken) {
+                        setToken(storedToken);
+                    }
                 }
+                setLoading(false);
+            }, []);
 
-                // 2. Добавление обработчика НАЙТИ ПАРУ (Тест API)
-                const findPairBtn = document.getElementById('findPairBtn');
-                if (findPairBtn) {
-                    findPairBtn.addEventListener('click', async function(e) {
-                        e.preventDefault(); 
-                        
-                        // Запрос к защищенному маршруту API
-                        try {
-                            const response = await fetch(`${BACKEND_URL}${PROTECTED_ROUTE}`, {
-                                method: 'GET',
-                                headers: {
-                                    'Authorization': `Bearer ${activeToken}`, // Отправляем токен!
-                                    'Content-Type': 'application/json'
-                                }
-                            });
+            // --- 2. Получение профиля пользователя ---
+            useEffect(() => {
+                if (token) {
+                    fetchUserProfile(token);
+                }
+            }, [token]);
 
-                            const data = await response.json();
-
-                            if (response.ok) {
-                                console.log('✅ Успешно получен защищенный ресурс:', data);
-                                
-                                // Успешный ответ от сервера - показываем профили
-                                alert(`Верификация JWT прошла успешно! Сервер ответил: ${data.secretData}`);
-                                
-                                // Скрываем/показываем секции
-                                if (profilesSection) profilesSection.style.display = 'block';
-                                if (heroSection) heroSection.style.display = 'none';
-                                if (mainHero) mainHero.style.display = 'none';
-                                
-                                if (profilesSection) profilesSection.scrollIntoView({ behavior: 'smooth' });
-
-                            } else {
-                                // Ошибка 401/403 (Сервер не принял токен)
-                                alert(`Ошибка доступа к API: ${data.error || response.statusText}. Попробуйте войти снова.`);
-                                console.error('API Error:', data);
-                            }
-
-                        } catch (error) {
-                            console.error('Network or CORS error:', error);
-                            alert('Не удалось подключиться к бэкенду. Проверьте, запущен ли сервер на порту 5001.');
+            const fetchUserProfile = useCallback(async (authToken) => {
+                setLoading(true);
+                try {
+                    const response = await fetch(`${BACKEND_URL}/api/protected/profile`, {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
                         }
                     });
+
+                    if (!response.ok) {
+                        // Если токен недействителен, очищаем его
+                        localStorage.removeItem('nebagaficha_token');
+                        setToken(null);
+                        setError('Ошибка аутентификации. Войдите снова.');
+                        return;
+                    }
+
+                    const data = await response.json();
+                    setUser(data.user);
+                } catch (err) {
+                    console.error("Profile fetch error:", err);
+                    setError('Не удалось загрузить профиль.');
+                } finally {
+                    setLoading(false);
                 }
+            }, []);
 
-            } else {
-                 // Токен невалиден
-                 localStorage.removeItem(tokenKey);
-                 if (!token) window.location.reload(); 
+            // --- 3. UI-функции ---
+            const handleLogout = () => {
+                localStorage.removeItem('nebagaficha_token');
+                setToken(null);
+                setUser(null);
+                setError(null);
+            };
+
+            if (loading) {
+                return e(LoadingScreen, { message: "Загрузка приложения..." });
             }
-        } 
-        
-        // --- Код Анимации (Оставлен для полноты) ---
-        const cards = document.querySelectorAll('.card');
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.style.opacity = 1;
-              entry.target.style.transform = 'translateY(0)';
+
+            if (error) {
+                return e(ErrorScreen, { message: error, onLogout: handleLogout });
             }
-          });
-        }, { threshold: 0.1 });
 
-        cards.forEach(card => {
-          card.style.opacity = 0;
-          card.style.transform = 'translateY(20px)';
-          card.style.transition = 'all 0.6s ease';
-          observer.observe(card);
-        });
-    });
+            if (!token || !user) {
+                return e(AuthScreen);
+            }
 
-</script>
+            // Если есть токен и пользователь, показываем приложение
+            return (
+                <div className="min-h-screen bg-gray-50 flex flex-col">
+                    {e(Header, { user: user, onLogout: handleLogout })}
+                    <main className="flex-grow p-4 md:p-8 flex items-start justify-center">
+                        {e(Matcher, { token: token, currentUserId: user.id })}
+                    </main>
+                    {e(Footer)}
+                </div>
+            );
+        };
+
+        // --- КОМПОНЕНТЫ UI ---
+
+        // Заголовок приложения
+        const Header = ({ user, onLogout }) => (
+            <header className="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-10">
+                <div className="flex items-center space-x-3">
+                    <Zap className="w-6 h-6 text-indigo-600" />
+                    <h1 className="text-xl font-extrabold text-gray-800 tracking-tight">
+                        Не баг, а фича
+                    </h1>
+                </div>
+                <div className="flex items-center space-x-4">
+                    <div className="hidden sm:flex flex-col text-right text-sm">
+                        <span className="font-semibold text-gray-700">{user.displayName || user.username}</span>
+                        <span className="text-gray-500">@{user.username}</span>
+                    </div>
+                    <img 
+                        src={user.avatarUrl || 'https://placehold.co/40x40/f1f5f9/94a3b8?text=U'} 
+                        alt={user.displayName} 
+                        className="w-10 h-10 rounded-full object-cover border-2 border-indigo-500"
+                    />
+                    <button
+                        onClick={onLogout}
+                        className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition duration-150 shadow-md"
+                        aria-label="Выйти"
+                    >
+                        {e(LogOut, { className: "w-5 h-5" })}
+                    </button>
+                </div>
+            </header>
+        );
+
+        // Экран авторизации
+        const AuthScreen = () => {
+            const authUrl = (provider) => `${BACKEND_URL}/api/auth/${provider}`;
+
+            return (
+                <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+                    <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-sm text-center">
+                        {e(Zap, { className: "w-12 h-12 text-indigo-600 mx-auto mb-4" })}
+                        <h2 className="text-2xl font-bold mb-6 text-gray-800">
+                            Найти свою фичу
+                        </h2>
+                        <p className="text-gray-600 mb-8">
+                            Войдите, чтобы начать поиск потенциальных пар.
+                        </p>
+                        
+                        <div className="space-y-4">
+                            <a 
+                                href={authUrl('google')} 
+                                className="flex items-center justify-center p-3 w-full bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition duration-200 shadow-lg"
+                            >
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo-google-48px.svg" alt="Google" className="w-5 h-5 mr-3 bg-white rounded-full" />
+                                Войти через Google
+                            </a>
+                            <a 
+                                href={authUrl('github')} 
+                                className="flex items-center justify-center p-3 w-full bg-gray-800 text-white rounded-lg font-semibold hover:bg-gray-900 transition duration-200 shadow-lg"
+                            >
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub" className="w-5 h-5 mr-3 invert" />
+                                Войти через GitHub
+                            </a>
+                        </div>
+                        
+                        <p className="mt-8 text-xs text-gray-400">
+                            Ваши данные используются только для матчинга.
+                        </p>
+                    </div>
+                </div>
+            );
+        };
+
+        // Экран загрузки
+        const LoadingScreen = ({ message }) => (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+                {e(Loader, { className: "w-10 h-10 text-indigo-500 animate-spin" })}
+                <p className="mt-4 text-gray-600">{message}</p>
+            </div>
+        );
+
+        // Экран ошибки
+        const ErrorScreen = ({ message, onLogout }) => (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-red-50 p-4">
+                {e(AlertTriangle, { className: "w-12 h-12 text-red-600" })}
+                <h2 className="text-2xl font-bold mt-4 text-red-800">Произошла ошибка</h2>
+                <p className="mt-2 text-red-700 text-center max-w-md">{message}</p>
+                <button
+                    onClick={onLogout}
+                    className="mt-6 p-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-150 shadow-md"
+                >
+                    {e(LogOut, { className: "w-5 h-5 inline mr-2" })}
+                    Выйти и попробовать снова
+                </button>
+            </div>
+        );
+
+        // Футер
+        const Footer = () => (
+            <footer className="p-4 text-center text-gray-500 text-sm border-t bg-white">
+                © {new Date().getFullYear()} Не баг, а фича. Все права защищены.
+            </footer>
+        );
+
+
+        // --- ГЛАВНЫЙ КОМПОНЕНТ ЛОГИКИ МАТЧИНГА ---
+
+        const Matcher = ({ token, currentUserId }) => {
+            const [currentMatch, setCurrentMatch] = useState(null);
+            const [matchLoading, setMatchLoading] = useState(false);
+            const [matchMessage, setMatchMessage] = useState('Нажмите "Найти пару"');
+
+            // Функция для поиска следующей пары
+            const findNextMatch = async () => {
+                if (matchLoading) return;
+
+                setMatchLoading(true);
+                setMatchMessage('Поиск...');
+                setCurrentMatch(null); 
+                
+                try {
+                    const response = await fetch(`${BACKEND_URL}/api/find-match`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    const data = await response.json();
+
+                    if (data.match) {
+                        setCurrentMatch(data.match);
+                        setMatchMessage('Найдена потенциальная пара!');
+                    } else if (data.message) {
+                        // 'No more users found in your area.'
+                        setMatchMessage(data.message);
+                    }
+
+                } catch (err) {
+                    console.error("Find match error:", err);
+                    setMatchMessage('Ошибка при поиске пары.');
+                } finally {
+                    setMatchLoading(false);
+                }
+            };
+            
+            // Функция для обработки свайпа (Лайк/Пропуск)
+            const handleSwipe = async (direction) => {
+                if (!currentMatch) return;
+                
+                const targetUserId = currentMatch.id;
+                setCurrentMatch(null); // Убираем карточку сразу после свайпа
+
+                try {
+                    const response = await fetch(`${BACKEND_URL}/api/swipe`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}` 
+                        },
+                        body: JSON.stringify({ 
+                            targetUserId, 
+                            direction
+                        })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.matchFound) {
+                        // ВАУ! МАТЧ!
+                        setMatchMessage(data.message); 
+                        // Выводим информацию о матче в сообщении
+                    } else {
+                        setMatchMessage(data.message); // 'Swipe processed.'
+                        // Ищем следующего пользователя
+                        findNextMatch();
+                    }
+
+                } catch (err) {
+                    console.error(`Swipe ${direction} error:`, err);
+                    setMatchMessage('Ошибка при обработке свайпа.');
+                }
+            };
+
+            return (
+                <div className="w-full max-w-xl">
+                    <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+                        Поиск фич
+                    </h2>
+
+                    {/* Блок карточки пользователя */}
+                    <div className="min-h-[450px] flex items-center justify-center">
+                        {currentMatch ? (
+                            e(MatchCard, { match: currentMatch, onSwipeLeft: () => handleSwipe('left'), onSwipeRight: () => handleSwipe('right') })
+                        ) : (
+                            <div className="bg-white p-8 rounded-xl shadow-lg border-2 border-dashed border-gray-300 w-full text-center">
+                                {matchLoading && e(LoadingScreen, { message: "Поиск следующей пары..." })}
+                                {!matchLoading && (
+                                    <>
+                                        {e(Users, { className: "w-12 h-12 text-gray-400 mx-auto mb-4" })}
+                                        <p className="text-gray-600 mb-6">{matchMessage}</p>
+                                        <button
+                                            onClick={findNextMatch}
+                                            className="p-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition duration-200 shadow-md flex items-center justify-center mx-auto"
+                                            disabled={matchLoading}
+                                        >
+                                            {e(Zap, { className: "w-5 h-5 mr-2" })}
+                                            Найти пару
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Кнопки свайпа (отображаются только при наличии пары) */}
+                    {currentMatch && (
+                        <div className="flex justify-center space-x-8 mt-6">
+                            {e(SwipeButton, { 
+                                icon: X, 
+                                color: "red", 
+                                label: "Пропустить", 
+                                onClick: () => handleSwipe('left') 
+                            })}
+                            {e(SwipeButton, { 
+                                icon: Heart, 
+                                color: "green", 
+                                label: "Лайк!", 
+                                onClick: () => handleSwipe('right') 
+                            })}
+                        </div>
+                    )}
+
+                    {/* Панель текущего пользователя для отладки */}
+                    {e(UserDebugCard, { token: token, currentUserId: currentUserId })}
+                </div>
+            );
+        };
+
+        // Карточка потенциальной пары
+        const MatchCard = ({ match, onSwipeLeft, onSwipeRight }) => (
+            <div className="bg-white rounded-xl shadow-2xl overflow-hidden w-full max-w-sm transform transition duration-300 hover:scale-[1.01] cursor-grab">
+                <div className="relative">
+                    <img 
+                        src={match.avatarUrl || `https://placehold.co/400x300/e0e7ff/4f46e5?text=${match.displayName.substring(0,1)}`} 
+                        alt={match.displayName} 
+                        className="w-full h-80 object-cover"
+                        onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/400x300/e0e7ff/4f46e5?text=U"; }}
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+                        <h3 className="text-3xl font-bold text-white">{match.displayName}</h3>
+                        <p className="text-sm text-gray-200">@{match.username}</p>
+                    </div>
+                </div>
+                <div className="p-6">
+                    {/* Использование IT-фразы, если нет реального описания */}
+                    <p className="text-gray-700 mb-4">{match.bio || getRandomItMotto()}</p>
+                    <p className="text-xs text-gray-400 break-words">ID: {match.id}</p>
+                </div>
+            </div>
+        );
+
+        // Кнопка свайпа
+        const SwipeButton = ({ icon: Icon, color, label, onClick }) => (
+            <button
+                onClick={onClick}
+                className={`flex flex-col items-center justify-center w-24 h-24 rounded-full bg-white shadow-xl hover:shadow-2xl transition duration-150 transform hover:scale-105 group border-4 border-${color}-400`}
+                aria-label={label}
+            >
+                {e(Icon, { className: `w-8 h-8 text-${color}-500 group-hover:text-${color}-600` })}
+                <span className="text-xs font-semibold text-gray-600 mt-1">{label}</span>
+            </button>
+        );
+
+        // Панель отладки
+        const UserDebugCard = ({ token, currentUserId }) => {
+            const [clipboardMessage, setClipboardMessage] = useState('');
+            
+            const copyToClipboard = (text) => {
+                try {
+                    // Используем устаревший метод для совместимости с iframe
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    setClipboardMessage('Скопировано!');
+                } catch (err) {
+                    setClipboardMessage('Ошибка копирования.');
+                }
+                setTimeout(() => setClipboardMessage(''), 2000);
+            };
+
+            return (
+                <div className="mt-12 p-4 bg-yellow-50 rounded-lg border border-yellow-200 text-sm">
+                    <h4 className="font-bold text-yellow-800 flex items-center">
+                        {e(AlertTriangle, { className: "w-4 h-4 mr-2" })}
+                        Отладочная информация (Не для продакшена)
+                    </h4>
+                    <div className="mt-2 space-y-2 text-gray-700">
+                        <div className="flex items-center justify-between">
+                            <span className="font-mono text-xs break-words max-w-[70%]">
+                                **User ID:** {currentUserId}
+                            </span>
+                            <button 
+                                onClick={() => copyToClipboard(currentUserId)}
+                                className="text-xs bg-yellow-200 p-1 rounded hover:bg-yellow-300"
+                            >
+                                Копировать ID
+                            </button>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <span className="font-mono text-xs break-words max-w-[70%]">
+                                **Token:** {token.substring(0, 15)}...
+                            </span>
+                            <button 
+                                onClick={() => copyToClipboard(token)}
+                                className="text-xs bg-yellow-200 p-1 rounded hover:bg-yellow-300"
+                            >
+                                Копировать Токен
+                            </button>
+                        </div>
+                    </div>
+                    {clipboardMessage && (
+                        <p className="text-center mt-2 text-green-600 font-semibold">{clipboardMessage}</p>
+                    )}
+                </div>
+            );
+        };
+
+
+        // Монтирование приложения
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(e(App));
+    </script>
 </body>
 </html>
